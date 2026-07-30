@@ -80,6 +80,19 @@ app.use('/api/testdrives', testDriveRoutes);
 app.use('/api/servicecenters', serviceCenterRoutes);
 app.use('/api/prebookings', preBookingRoutes);
 
+// ─── Serve Static Frontend ────────────────────────────────────────────────────
+if (process.env.NODE_ENV === 'production') {
+  const staticPath = path.join(__dirname, '../client/dist');
+  app.use(express.static(staticPath));
+
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) {
+      return next(); // Let API 404s fall through to the notFound middleware
+    }
+    res.sendFile(path.join(staticPath, 'index.html'));
+  });
+}
+
 // ─── Error Handling ───────────────────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
