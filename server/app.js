@@ -80,18 +80,13 @@ app.use('/api/testdrives', testDriveRoutes);
 app.use('/api/servicecenters', serviceCenterRoutes);
 app.use('/api/prebookings', preBookingRoutes);
 
-// ─── Serve Static Frontend ────────────────────────────────────────────────────
-if (process.env.NODE_ENV === 'production') {
-  const staticPath = path.join(__dirname, '../client/dist');
-  app.use(express.static(staticPath));
-
-  app.get('*', (req, res, next) => {
-    if (req.originalUrl.startsWith('/api')) {
-      return next(); // Let API 404s fall through to the notFound middleware
-    }
-    res.sendFile(path.join(staticPath, 'index.html'));
+// ─── Root Route ─────────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Car Inventory API is running. Please use the Vercel URL for the frontend.',
   });
-}
+});
 
 // ─── Error Handling ───────────────────────────────────────────────────────────
 app.use(notFound);
